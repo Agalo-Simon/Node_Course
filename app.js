@@ -1,7 +1,15 @@
 const express = require("express");
+const mongoose = require('mongoose');
 
 const app = express();
+//Connect to mongodb
+const dbURI ="mongodb+srv://galos:galos1234@cluster0.jetmcd6.mongodb.net/";
+mongoose.connect(dbURI, {useNewUrlParse: true, useUnifiedTopology:true});
+
+
 const morgan = require("morgan");
+
+
 
 //register view engine
 app.set("view engine", "ejs");
