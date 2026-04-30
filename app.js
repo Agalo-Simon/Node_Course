@@ -1,45 +1,38 @@
 const express = require("express");
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
+const blogRoutes = require("./route/blogRoutes");
 
 const app = express();
-//Connect to mongodb
-const dbURI ="mongodb+srv://galos:galos1234@cluster0.jetmcd6.mongodb.net/";
-mongoose.connect(dbURI, {useNewUrlParse: true, useUnifiedTopology:true});
-
-
 const morgan = require("morgan");
+const { result } = require("lodash");
 
-
+//Connect to mongodb
+// const dbURI = "mongodb+srv://galos:galos1234@cluster0.jetmcd6.mongodb.net/";
+const dbURI =
+  "mongodb+srv://galos:galos1234@node-tuts.fzpfjur.mongodb.net/node-tuts";
+mongoose
+  .connect(dbURI)
+  .then((result) => app.listen(3000))
+  .catch((err) => console.log(err));
 
 //register view engine
 app.set("view engine", "ejs");
 
-app.listen(3000);
-
-
 //middleware and static files
-app.use(express.static('public'))
+app.use(express.static("public"));
+app.use(express.urlencoded());
 app.use(morgan("dev"));
 
+//--- routes ---
 app.get("/", (req, res) => {
-  const blogs = [
-    { title: "Milk Tea", snipet: "Just enjoy some milk tea here" },
-    { title: "Banana Juice", snipet: "Just enjoy some banana juice here" },
-    { title: "Eggs", snipet: "Just enjoy some fridge eggs here" },
-  ];
-
-  //res.send('<p>Home Page</p>')
-  //   res.sendFile("./views/index.html", { root: __dirname });
-  res.render("index", { title: "Home", blogs });
+  res.redirect("/blogs");
 });
+
 app.get("/about", (req, res) => {
-  //   res.sendFile("./views/about.html", { root: __dirname });
   res.render("about", { title: "About" });
 });
-
-app.get("/blogs/create", (req, res) => {
-  res.render("create", { title: "Create a new Blog" });
-});
+// --- blog routes ---
+app.use("/blogs", blogRoutes);
 
 //404
 app.use((req, res) => {
